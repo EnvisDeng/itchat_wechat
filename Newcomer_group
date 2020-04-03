@@ -10,7 +10,6 @@ import time
 # 注册机器人
 bot = Bot(cache_path=True, console_qr=2)
 bot.enable_puid('wxpy_puid.pkl')
-# rebot = bot.groups().search('Mac维权2群')  # 需要加入的群
 rebot = bot.groups().search('群聊123')  # 需要加入的群
 
 
