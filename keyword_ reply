@@ -1,0 +1,64 @@
+#!/usr/bin/python3
+# coding=utf8
+
+
+import re
+from random import randint
+
+from wxpy import *
+import schedule
+import time
+
+# 注册机器人
+bot = Bot(cache_path=True, console_qr=2)
+bot.enable_puid('wxpy_puid.pkl')
+rebot = bot.groups().search('群聊123')  # 需要加入的群
+
+
+
+
+# 判断是否为新用户入群
+invite_compile = re.compile(r'邀请"(.*?)"加入了群聊\s*$')
+# 新用户入群发送的公告
+rebot_msg = '''@{atname}\u2005\u2005\u2005 🇨🇳🇨🇳欢迎战友入群\n
+'''
+
+def what_TOP():
+    food_list=["厨师微博：",'厨师邮箱：','厨师推特：']
+    random_number=randint(0,len(food_list)-1)
+    return food_list[random_number]
+
+
+# 注册群来抓群群消息
+
+@bot.register(rebot, NOTE)
+def invite_group(msg):
+    """ 群通知处理 """
+    text = msg.text  # 通知的内容
+    member = msg.member.name  # 消息发送者昵称
+    invite_names = invite_compile.findall(text)  # 判断是否是加入了新用户
+    if invite_names:  # 用于邀请
+        invite_name = invite_names[0]  # 加入者的昵称
+        if rebot_msg:
+            note = rebot_msg.format(atname=invite_name)
+            msg.sender.send(note)  # 向群里发送欢迎语句
+        return
+
+@bot.register(rebot, TEXT)
+def print_group_msg(msg):
+    text1 =msg.text
+    if msg.is_at:
+        print(msg)
+        if '投诉' in text1:
+            msg.reply('投诉11111')
+        elif '收集' in text1:
+            msg.reply('收集22222' )
+        else:
+            msg.reply('无法识别指令'+' '+what_TOP())
+
+
+
+
+while True:
+    schedule.run_pending()
+    time.sleep(4)
